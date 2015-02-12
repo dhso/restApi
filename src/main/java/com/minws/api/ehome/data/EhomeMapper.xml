@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.minws.api.ehome.data.EhomeMapper">
+
+    <insert id="addDevice">
+	    insert into ehome_device (name,type,unit,status,dee_bur_id)
+	    values (#{name},#{type},#{unit},#{status},#{dee_bur_id})
+	</insert>
+	
+    <select id="countDeviceNum" resultType="int">
+        select count(1)
+		from ehome_device ede
+		where ede.name = #{nick} AND ede.type = #{type} AND ede.dee_bur_id = #{dee_bur_id}
+    </select>
+    
+    <select id="existDevice" resultType="int">
+        select count(1)
+		from ehome_device ede
+		where ede.id = #{id}
+    </select>
+    
+    <delete id="delDevice">
+        delete from ehome_device ede
+		where ede.id = #{id}
+    </delete>
+    
+    <select id="listAll" resultType="com.minws.api.ehome.entity.Device">
+        select ede.id as id,
+        		ede.name as name,
+        		ede.type as type,
+        		ede.unit as unit,
+        		ede.status as status
+		from ehome_device ede
+		where ede.dee_bur_id = #{dee_bur_id}
+    </select>
+    
+	<select id="listType" resultType="String">
+        select distinct type
+		from ehome_device
+		where dee_bur_id = #{dee_bur_id}
+    </select>
+    
+    <select id="listByType0" resultType="com.minws.api.ehome.entity.Device">
+        select ede.id as id,
+        		ede.name as name,
+        		ede.type as type,
+        		ede.unit as unit,
+        		ede.status as status
+		from ehome_device ede
+		where ede.dee_bur_id = #{dee_bur_id} and ede.type= #{type}
+    </select>
+    
+    <select id="listByType1" resultType="com.minws.api.ehome.entity.DeviceData">
+         select ede.id as id,
+        		ede.name as name,
+        		ede.type as type,
+        		ede.unit as unit,
+        		ede.status as status,
+                eda.device_value as device_value,
+                eda.device_date as device_date
+		from ehome_device ede
+		left join ehome_data eda on (
+			eda.device_id = ede.id
+			and eda.device_date = (select eda1.device_date from ehome_data eda1 where eda1.device_id = 1 order by device_date desc limit 1)
+			)
+		where ede.dee_bur_id = #{dee_bur_id} and ede.type= #{type}
+    </select>
+    
+    <insert id="inData">
+        insert into ehome_data (device_id,device_value,device_date)
+        values (#{device_id},#{device_value},#{device_date})
+    </insert>
+    
+    <select id="outData" resultType="com.minws.api.ehome.entity.Data">
+        select eda.device_value as device_value,
+        		eda.device_date as device_date
+		from ehome_data eda
+		where eda.device_id = #{device_id}
+		order by device_date desc limit #{limit}
+    </select>
+</mapper>

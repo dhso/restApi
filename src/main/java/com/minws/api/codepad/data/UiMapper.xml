@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.minws.api.codepad.data.UiMapper">
+    <resultMap type="com.minws.api.codepad.entity.Tree" id="TreeResultMap">
+		<id column="id"  property="id"/>
+		<result column="text" property="text"/>
+		<result column="state" property="state"/>
+    	<result column="iconCls" property="iconCls"/>
+		<association property="attributes" javaType="com.minws.api.codepad.entity.TreeExt">
+		    <result column="node_type" property="node_type"/>
+		    <result column="pid" property="pid"/>
+			<result column="open" property="open"/>
+			<result column="writer" property="writer"/>
+			<result column="update_dt" property="update_dt"/>
+		</association>
+	</resultMap>
+	
+	<select id="selectMenuTreeByPid" resultMap="TreeResultMap">
+	    select
+			mt.id as id,
+		    mt.text as text,
+		    mt.state as state,
+            mt.iconCls as iconCls,
+            mt.node_type as node_type,
+            mt.pid as pid,
+            mt.open as open,
+            mt.writer as writer,
+            mt.update_dt as update_dt
+	    from codepad_menu_tree mt
+	    where mt.pid = #{pid}
+	</select>
+	
+	<select id="selectMenuTreeP" resultMap="TreeResultMap">
+	    select
+			mt.id as id,
+		    mt.text as text,
+		    mt.state as state,
+            mt.iconCls as iconCls,
+            mt.node_type as node_type,
+            mt.pid as pid,
+            mt.open as open,
+            mt.writer as writer,
+            mt.update_dt as update_dt
+	    from codepad_menu_tree mt
+	    where mt.node_type = '1'
+	</select>
+	
+	<update id="updateMenuTreeById">
+	    update codepad_menu_tree mt
+	    set
+			<if test="pid!=null and pid!=''">mt.pid=#{pid},</if>
+	    	<if test="text!=null and text!=''">mt.text=#{text},</if>
+	    	<if test="open!=null and open!=''">mt.open=#{open},</if>
+	    	<if test="writer!=null and writer!=''">mt.writer=#{writer},</if>
+	    	mt.update_dt = now()
+	    where mt.id = #{id}
+	</update>
+	
+	<insert id="insertMenuTree">
+		insert into codepad_menu_tree(pid,state,text,node_type,open,writer,update_dt)
+		values(#{pid},#{state},#{text},#{node_type},#{open},#{writer},now())
+	</insert>
+	
+	<delete id="deleteMenuTreeById">
+	    delete from codepad_menu_tree
+		where id = #{id}
+	</delete>
+	
+	<select id="selectContentTabByTid" resultType="String">
+	    select
+			ct.content as content
+	    from codepad_content_tab ct
+	    where ct.tid = #{tid}
+	</select>
+	
+	<update id="updateContentTabByTid">
+	    update codepad_content_tab ct
+	    set ct.content = #{html}
+	    where ct.tid = #{tid}
+	</update>
+	
+	<insert id="insertContentTabByTid">
+	    insert into codepad_content_tab(tid,content)
+	    values( #{tid}, #{html}) 
+	</insert>
+	
+	<delete id="deleteContentTabByTid">
+	    delete from codepad_content_tab
+		where tid = #{tid}
+	</delete>
+	
+	<select id="checkContentTabExistByTid" resultType="int">
+		select count(1)
+		from codepad_content_tab ct
+		where ct.tid = #{tid}
+	</select>
+	
+	<select id="selectMenuTreeBySearch" resultMap="TreeResultMap">
+	    select
+			mt.id as id,
+		    mt.text as text,
+		    mt.state as state,
+            mt.iconCls as iconCls,
+            mt.node_type as node_type,
+            mt.pid as pid,
+            mt.open as open,
+            mt.writer as writer,
+            mt.update_dt as update_dt
+	    from codepad_menu_tree mt
+	    where mt.id in (select tid from codepad_content_tab where content like CONCAT('%',#{search},'%' ))
+	</select>
+
+	<select id="selectTopMenu" resultMap="TreeResultMap">
+	    select
+			mt.id as id,
+		    mt.text as text,
+		    mt.state as state,
+            mt.iconCls as iconCls,
+            mt.node_type as node_type,
+            mt.pid as pid,
+            mt.open as open,
+            mt.writer as writer,
+            mt.update_dt as update_dt
+	    from codepad_menu_tree mt
+	    where mt.open != 0
+	    order by mt.update_dt desc limit #{num}
+	</select>
+</mapper>

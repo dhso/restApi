@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.minws.api.app.data.AppMapper">
+	<select id="selectAppByAppId" resultType="com.minws.api.app.entity.App">
+	    select
+			ba.bap_id as appId,
+		    ba.bap_key as appKey,
+		    ba.bap_name as appName,
+            bu.bur_id as usrId
+	    from sys_buser bu
+	    left join sys_xuser xu on bu.bur_id=xu.xur_bur_id
+	    left join sys_bapp ba on bu.bur_id=ba.bap_bur_id
+	    where
+			ba.bap_id = #{appid}
+			and ba.bap_del_flag=0
+			and xu.xur_del_flag=0
+	</select>
+</mapper>

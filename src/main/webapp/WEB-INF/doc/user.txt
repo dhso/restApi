@@ -1,0 +1,17 @@
+/user/list[GET]
+
+
+/user/add [POST]
+{
+	"nick":"tester1",
+    "name":"≤‚ ‘»À‘±1",
+    "mobile":"15262731800",
+    "email":"tester1@163.com",
+    "password":"123456"
+}
+
+/user/login [POST]
+{
+	"nick":"tester1",
+    "password":"123456"
+}

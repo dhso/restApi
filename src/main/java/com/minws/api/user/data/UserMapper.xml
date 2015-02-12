@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.minws.api.user.data.UserMapper">
+	<select id="selectUser" resultType="com.minws.api.user.entity.User">
+		SELECT
+			BU.BUR_ID AS id,
+			BU.BUR_NICK AS nick,
+			BU.BUR_NAME AS name,
+			BU.BUR_GENDER AS gender,
+			BU.BUR_BIRTHDAY AS birthday,
+			BU.BUR_MOBILE AS mobile,
+			BU.BUR_EMAIL AS email,
+			XU.XUR_DEL_FLAG AS isdev,
+			XU.XUR_LEVEL AS level
+		FROM sys_buser BU
+		LEFT JOIN sys_xuser XU ON BU.BUR_ID = XU.XUR_BUR_ID
+		WHERE
+			<if test="nick!=null">BU.BUR_NICK=#{nick} and </if>
+			<if test="password!=null">XU.XUR_PASSWORD=#{password} and </if>
+			XU.XUR_DEL_FLAG=0
+	</select>
+
+	<insert id="addUser" statementType="CALLABLE">
+		{call proc_add_user(#{nick, jdbcType=VARCHAR, mode=IN},
+							<choose>
+								<when test="name!=null">#{name, jdbcType=VARCHAR, mode=IN},</when>
+								<otherwise>NULL,</otherwise>
+							</choose>
+							<choose>
+								<when test="gender!=null">#{gender, jdbcType=VARCHAR, mode=IN},</when>
+								<otherwise>NULL,</otherwise>
+							</choose>
+							<choose>
+								<when test="birthday!=null">#{birthday, jdbcType=DATE, mode=IN},</when>
+								<otherwise>NULL,</otherwise>
+							</choose>
+							<choose>
+								<when test="mobile!=null">#{mobile, jdbcType=VARCHAR, mode=IN},</when>
+								<otherwise>NULL,</otherwise>
+							</choose>
+							<choose>
+								<when test="email!=null">#{email, jdbcType=VARCHAR, mode=IN},</when>
+								<otherwise>NULL,</otherwise>
+							</choose>
+							#{password, jdbcType=VARCHAR, mode=IN})}
+	</insert>
+	
+	<select id="checkUserExistByNick" resultType="int">
+		select count(1)
+		from sys_buser bu
+		LEFT JOIN sys_xuser XU ON BU.BUR_ID = XU.XUR_BUR_ID
+		WHERE
+			XU.XUR_DEL_FLAG=0
+			AND bu.BUR_NICK = #{nick}
+	</select>
+	
+</mapper>

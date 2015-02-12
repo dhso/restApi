@@ -1,0 +1,11 @@
+[GET] http://api.minws.com/api/codepad/ui/menu_tree/select_menu
+[GET] http://api.minws.com/api/codepad/ui/menu_tree/select_menu?id=xx
+[GET] http://api.minws.com/api/codepad/ui/menu_tree/select_menu?id=xx&callback=xx
+[POST] http://api.minws.com/api/codepad/ui/menu_tree/select_menu form[id]
+[POST] http://api.minws.com/api/codepad/ui/menu_tree/update_menu?id=xx json[pid,text,open,writer]
+[POST] http://api.minws.com/api/codepad/ui/menu_tree/add_menu?pid=xx json[state,text,open,writer]
+[POST] http://api.minws.com/api/codepad/ui/menu_tree/del_menu?id=xx
+[GET] http://api.minws.com/api/codepad/ui/content_tab/select_content?tid=xx
+[POST] http://api.minws.com/api/codepad/ui/content_tab/update_content?tid=xx payload[html]
+[POST] http://api.minws.com/api/codepad/ui/content_tab/del_content?tid=xx
+[GET] http://api.minws.com/api/codepad/ui/menu_tree/select_menu_by_search?search=xx
